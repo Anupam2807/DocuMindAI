@@ -10,7 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { useUser,SignOutButton,UserButton } from '@clerk/nextjs';
+import { useUser,UserButton } from '@clerk/nextjs';
 
 type StoredDocument = {
   filename: string;
@@ -19,7 +19,6 @@ type StoredDocument = {
 };
 
 export default function Home() {
-  const [files, setFiles] = useState<FileList | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<
     {
       name: string;
@@ -119,9 +118,9 @@ export default function Home() {
     }
   };
 
-  const confirmDelete = (filename: string) => {
-    setDeleteModal({show: true, filename});
-  };
+  // const confirmDelete = (filename: string) => {
+  //   setDeleteModal({show: true, filename});
+  // };
 
   const canChat =
     !isUploading && uploadedFiles.every((f) => f.status !== "pending");
@@ -223,7 +222,6 @@ export default function Home() {
       ]);
       setIsThinking(false);
 
-      setFiles(null);
     } catch (e) {
       console.log("error", e);
       setMessages((prev) => [
@@ -261,7 +259,7 @@ export default function Home() {
               </button>
             </div>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-              Are you sure you want to delete "{deleteModal.filename}"? This action cannot be undone.
+            Are you sure you want to delete &quot;{deleteModal.filename}&quot;? This action cannot be undone.
             </p>
             <div className="flex justify-end gap-3">
               <button
