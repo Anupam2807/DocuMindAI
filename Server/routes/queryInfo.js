@@ -9,6 +9,8 @@ const path = require("path");
 const redis = require("../config/valkeyClient");
 const ValkeyMemory = require("../memory/valkeyMemory");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const os = require('os')
+const fs = require('fs')
 
 if (process.env.GOOGLE_CREDENTIALS_BASE64) {
   const decoded = Buffer.from(
