@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useChat } from "@ai-sdk/react";
 import { motion } from "framer-motion";
-import { Upload, Send, FileText, Trash2, Bot, User, Clock, X } from "lucide-react";
+import { Upload, Send, FileText, Trash2, Bot, User, Clock, X, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -30,6 +30,8 @@ export default function Home() {
   const [isLoadingDocs, setIsLoadingDocs] = useState<boolean>(true);
   const [docsLoadError, setDocsLoadError] = useState<string | null>(null);
   const [deleteModal, setDeleteModal] = useState<{show: boolean, filename: string | null}>({show: false, filename: null});
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+
 
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -246,6 +248,12 @@ export default function Home() {
 
   return (
     <main className="flex h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+       <button
+    onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+    className="lg:hidden fixed top-4 right-4 z-50 p-2 rounded-lg bg-white dark:bg-gray-800 shadow-md border border-gray-200 dark:border-gray-700"
+  >
+    <Menu className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+  </button>
       {deleteModal.show && deleteModal.filename && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-md w-full mx-4 border border-gray-200 dark:border-gray-700">
@@ -279,10 +287,24 @@ export default function Home() {
         </div>
       )}
 
-      <div className="w-[30vw] border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-md p-6 flex flex-col">
-        <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
-          Documents
-        </h2>
+<div className={`fixed lg:static inset-y-0 right-0 w-[70vw] lg:w-[30vw] transform transition-transform duration-300 ease-in-out z-40 bg-white dark:bg-gray-900 shadow-md p-6 flex flex-col ${
+  isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'
+}`}>
+  
+  <div className="flex justify-between items-center mb-6">
+  <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
+      Documents
+    </h2>
+    <button
+      onClick={() => setIsMobileMenuOpen(false)}
+      className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+    >
+      <X className="h-6 w-6 text-gray-600 dark:text-gray-300" />
+    </button>
+
+  </div>
+
+
 
         <Card className="p-6 mb-6 border-none shadow-lg bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
           <div className="flex flex-col items-center gap-3">
@@ -461,7 +483,7 @@ export default function Home() {
       </div>
 
       {/* Chat Main Area */}
-      <div className="w-[70vw] flex flex-col h-full bg-gray-50 dark:bg-gray-900">
+      <div className="w-full lg:w-[70vw] flex flex-col h-full bg-gray-50 dark:bg-gray-900">
         <div className="p-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
             DocuMind AI
@@ -542,18 +564,27 @@ export default function Home() {
 
         <div className="p-6 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
           <form onSubmit={onSubmit} className="flex gap-3 max-w-4xl mx-auto">
-            <input
-              type="text"
-              value={input}
-              onChange={handleInputChange}
-              placeholder={
-                canChat
-                  ? "Ask a question related to your document"
-                  : "Wait for files to process…"
-              }
-              disabled={!canChat}
-              className="flex-1 p-3 rounded-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            />
+          <div className="flex-1 relative">
+  <input
+    type="text"
+    value={input}
+    onChange={handleInputChange}
+    placeholder={
+      canChat
+        ? "Ask a question related to your document"
+        : "Wait for files to process…"
+    }
+    disabled={!canChat}
+    className="w-full p-3 pr-24 rounded-full border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+  />
+  <button
+    type="button"
+    onClick={handleUploadClick}
+    className="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full bg-purple-100 hover:bg-purple-200 dark:bg-purple-900/30 dark:hover:bg-purple-900/50 hover:cursor-pointer transition-colors"
+  >
+    <Upload size={16} className="text-purple-600 dark:text-purple-400" />
+  </button>
+</div>
             <Button
               type="submit"
               disabled={!canChat || isLoading}
@@ -574,6 +605,12 @@ export default function Home() {
           </form>
         </div>
       </div>
+      {isMobileMenuOpen && (
+  <div
+    className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+    onClick={() => setIsMobileMenuOpen(false)}
+  />
+)}
     </main>
   );
 }
